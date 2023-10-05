@@ -11,25 +11,30 @@ router.get('/login', function (req, res, next) {
   res.render('login');
 });
 
-router.post('/sign')
-//read
-router.get('/select', async (req, res) => {
+router.post('/login', async (req, res) => {
+  const { id, pw } = req.body
   try {
     const query = await pool
 
-    const result = await query.request().input('name', sql.VarChar, 't1')
-      .query('SELECT * FROM users where name = @name').then((result) => {//값 형식 결정
+    const result = await query.request()
+      .input('id', sql.VarChar, id)
+      .input('pw', sql.VarChar, pw)
+      .query('select * from users where id = @id and pw = @pw')
+      .then((result) => {
         const result_data = {
-          total: result.output.TOTAL,
-          result: result.recordset
+          total : result.output.TOTAL,
+          result : result.recordset
         }
         return result_data
-      }).catch((err) => {
-        console.error('err, ', err)
+      }).catch((err)=>{
+        console.error(`err, ${err}`)
       })
-    // console.log(Object.keys(result.result).length) //검색된 목록 갯수
-    console.log(result.result[0].name) //검색된 이름
-    res.send(result)
+
+      if(Object.keys(result.result) == 0){
+        res.send('틀림')
+        return
+      }
+      res.send(result)
   } catch (err) {
     console.error(`err, ${err}`)
   }
@@ -51,21 +56,21 @@ router.get('/update', async (req, res) => {
 })
 //delete
 router.get('/delete', async (req, res) => {
-  try{
+  try {
     const query = await pool
 
     const result = await query.request()
       .input('name', sql.VarChar, 't')
       .query('delete from users where name = @name')
     console.log('delete 성공')
-  }catch(err){
-    
+  } catch (err) {
+
   }
 })
 
 //insert
-router.get('/insert', async (req, res) =>{
-  try{
+router.get('/insert', async (req, res) => {
+  try {
     const query = await pool
 
     const result = await query.request()
@@ -74,7 +79,7 @@ router.get('/insert', async (req, res) =>{
       .input('id', sql.VarChar, 'i')
       .query('insert into users values(@name, @id, @pw)')
     console.log('insert 성공')
-  }catch(err){
+  } catch (err) {
 
   }
 })
