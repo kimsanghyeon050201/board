@@ -3,19 +3,23 @@ var router = express.Router();
 const { sql, pool } = require('../data/db')
 
 /* GET home page. */
-router.get('/', function (req, res, next) {
+router.get('/home', function (req, res, next) {
   res.render('index', { title: 'Express' });
 });
-
-router.get('/login', function (req, res, next) {
-  res.render('login');
+router.get('/', function (req, res, next) {
+  res.render('login')
 });
+router.get('/board', (req, res) => {
+  res.render('board')
+})
 
+/* service logic */
 router.post('/login', async (req, res) => {
   const { id, pw } = req.body
   try {
     const query = await pool
 
+    console.log(`id : ${id}, pw : ${pw}`)
     const result = await query.request()
       .input('id', sql.VarChar, id)
       .input('pw', sql.VarChar, pw)
@@ -29,9 +33,10 @@ router.post('/login', async (req, res) => {
       }).catch((err) => {
         console.error(`err, ${err}`)
       })
-
-    if (Object.keys(result.result) == 0) {
-      res.send('틀림')
+    if (Object.keys(result.result).length == 0) {
+      res.send({
+        message : "failed"
+      })
       return
     }
     res.send(result)
@@ -45,7 +50,7 @@ router.get('/list', async (req, res) => {
     const qu = await pool
 
     const result = await qu.request()
-      .query('select title, name, la_time, views from post')
+      .query('select title, name, convert(varchar, la_time, 120) as la_time, views from post')
       .then((result) => {
         const result_data = {
           total: result.output.TOTAL,
@@ -55,27 +60,27 @@ router.get('/list', async (req, res) => {
       }).catch((err) => {
         console.error(`err, ${err}`)
       })
+      
+      res.send(result)
   } catch (err) {
     console.error(`err, ${err}`)
   }
 })
 
 //update
-router.put('/edit', async (req, res) => {
-  const { id, title, name, time, views, content } = req.body
+router.patch('/edit', async (req, res) => {
+  const { id, title, content } = req.body
   try {
     const query = await pool
 
     const result = await query.request()
       .input('id', sql.Int, parseInt(id))
       .input('title', sql.VarChar, title)
-      .input('name', sql.VarChar, name)
-      .input('time', sql.DateTime, time)
-      .input('views', sql.Int, parseInt(views))
       .input('content', sql.VarChar, content)
-      .query('update post set title = @title, name = @name, la_time = @time, views = @views, content = @content where id = @id').then(result => {
-
-      })
+      .query('update post set title = @title, la_time = convert(varchar, GETDATE(), 120), content = @content where id = @id')
+    res.send({
+      message : "success"
+    })
   } catch (err) {
     console.error(`err, ${err}`)
   }
@@ -98,7 +103,7 @@ router.delete('/delete', async (req, res) => {
 
 //insert
 router.post('/post', async (req, res) => {
-  const { name, title, content, time, views } = req.body
+  const {title, content,} = req.body
 
   try {
     const query = await pool
@@ -107,10 +112,10 @@ router.post('/post', async (req, res) => {
       .input('name', sql.VarChar, name)
       .input('title', sql.VarChar, title)
       .input('content', sql.VarChar, content)
-      .input('time', sql.DateTime, time)
-      .input('views', sql.Int, parseInt(views))
-      .query('INSERT into post(name, title, content, la_time, views) values(@name, @title, @content, @time, @views)')
-    console.log('insert 성공')
+      .query('INSERT into post(name, title, content, la_time, views) values(@name, @title, @content, convert(varchar, GETDATE(), 120), 0)')
+    console.log({
+      message : "success"
+    })
   } catch (err) {
     console.error(`err, ${err}`)
   }
