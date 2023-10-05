@@ -22,65 +22,97 @@ router.post('/login', async (req, res) => {
       .query('select * from users where id = @id and pw = @pw')
       .then((result) => {
         const result_data = {
-          total : result.output.TOTAL,
-          result : result.recordset
+          total: result.output.TOTAL,
+          result: result.recordset
         }
         return result_data
-      }).catch((err)=>{
+      }).catch((err) => {
         console.error(`err, ${err}`)
       })
 
-      if(Object.keys(result.result) == 0){
-        res.send('틀림')
-        return
-      }
-      res.send(result)
+    if (Object.keys(result.result) == 0) {
+      res.send('틀림')
+      return
+    }
+    res.send(result)
+  } catch (err) {
+    console.error(`err, ${err}`)
+  }
+})
+
+router.get('/list', async (req, res) => {
+  try {
+    const qu = await pool
+
+    const result = await qu.request()
+      .query('select title, name, la_time, views from post')
+      .then((result) => {
+        const result_data = {
+          total: result.output.TOTAL,
+          result: result.recordset
+        }
+        return result_data
+      }).catch((err) => {
+        console.error(`err, ${err}`)
+      })
   } catch (err) {
     console.error(`err, ${err}`)
   }
 })
 
 //update
-router.get('/update', async (req, res) => {
+router.put('/edit', async (req, res) => {
+  const { id, title, name, time, views, content } = req.body
   try {
     const query = await pool
 
     const result = await query.request()
-      .input('pw', sql.VarChar, 'asd2')
-      .input('name', sql.VarChar, 't1')
-      .query('update users set pw = @pw where name = @name')
-    console.log('update 성공')
-  } catch (err) {
+      .input('id', sql.Int, parseInt(id))
+      .input('title', sql.VarChar, title)
+      .input('name', sql.VarChar, name)
+      .input('time', sql.DateTime, time)
+      .input('views', sql.Int, parseInt(views))
+      .input('content', sql.VarChar, content)
+      .query('update post set title = @title, name = @name, la_time = @time, views = @views, content = @content where id = @id').then(result => {
 
+      })
+  } catch (err) {
+    console.error(`err, ${err}`)
   }
 })
 //delete
-router.get('/delete', async (req, res) => {
+router.delete('/delete', async (req, res) => {
+
+  const { id } = req.body
+
   try {
     const query = await pool
 
     const result = await query.request()
-      .input('name', sql.VarChar, 't')
-      .query('delete from users where name = @name')
-    console.log('delete 성공')
+      .input('id', sql.VarChar, id)
+      .query('delete from post where id = @id')
   } catch (err) {
-
+    console.error(`err, ${err}`)
   }
 })
 
 //insert
-router.get('/insert', async (req, res) => {
+router.post('/post', async (req, res) => {
+  const { name, title, content, time, views } = req.body
+
   try {
     const query = await pool
 
     const result = await query.request()
-      .input('pw', sql.VarChar, 'a')
-      .input('name', sql.VarChar, 't')
-      .input('id', sql.VarChar, 'i')
-      .query('insert into users values(@name, @id, @pw)')
+      .input('name', sql.VarChar, name)
+      .input('title', sql.VarChar, title)
+      .input('content', sql.VarChar, content)
+      .input('time', sql.DateTime, time)
+      .input('views', sql.Int, parseInt(views))
+      .query('INSERT into post(name, title, content, la_time, views) values(@name, @title, @content, @time, @views)')
     console.log('insert 성공')
   } catch (err) {
-
+    console.error(`err, ${err}`)
   }
 })
 
