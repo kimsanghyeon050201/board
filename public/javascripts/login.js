@@ -19,6 +19,8 @@ btn.addEventListener("click", () => {
     }).then(result => {
         const value = result.result
         
+        console.log(value)
+
         if(value === undefined){
             alert("실패")
         }else{
