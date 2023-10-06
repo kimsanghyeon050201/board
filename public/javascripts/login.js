@@ -4,7 +4,7 @@ const pw = document.querySelector("#floatingInputPw")
 const btn = document.querySelector("#btn1")
 
 btn.addEventListener("click", () => {
-    res = fetch("http://localhost:3000/login", {
+    fetch("http://localhost:3000/login", {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -23,6 +23,7 @@ btn.addEventListener("click", () => {
 
         if(value === undefined){
             alert("실패")
+            btn.innerHTML = "asd"
         }else{
             console.log(value.name)
             alert("성공")
@@ -31,4 +32,6 @@ btn.addEventListener("click", () => {
         }
     })
 })
+
+
 

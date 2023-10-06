@@ -144,9 +144,7 @@ router.post('/post', async (req, res) => {
 
   try {
     const query = await pool
-
-    console.log(`${title}, ${content}, ${name}`)
-
+    
     const result = await query.request()
       .input('name', sql.VarChar, name)
       .input('title', sql.VarChar, title)
