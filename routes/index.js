@@ -59,7 +59,7 @@ router.get('/list', async (req, res) => {
     const query = await pool
 
     const result = await query.request()
-      .query('select title, name, convert(varchar, la_time, 120) as la_time, views from post')
+      .query('select title, name, convert(varchar, la_time, 120) as la_time, views, id from post')
       .then((result) => {
         const result_data = {
           total: result.output.TOTAL,
@@ -113,12 +113,11 @@ router.patch('/edit', async (req, res) => {
 router.delete('/delete', async (req, res) => {
 
   const { id } = req.body
-
   try {
     const query = await pool
 
     const result = await query.request()
-      .input('id', sql.VarChar, id)
+      .input('id', sql.Int, parseInt(id))
       .query('delete from post where id = @id')
       .then(() => {
         res.status(200).json({
@@ -144,7 +143,7 @@ router.post('/post', async (req, res) => {
 
   try {
     const query = await pool
-    
+
     const result = await query.request()
       .input('name', sql.VarChar, name)
       .input('title', sql.VarChar, title)
