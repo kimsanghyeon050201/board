@@ -121,10 +121,10 @@ router.post('/post', async (req, res) => {
       .input('title', sql.VarChar, title)
       .input('content', sql.VarChar, content)
       .query('INSERT into post(name, title, content, la_time, views) values(@name, @title, @content, convert(varchar, GETDATE(), 120), 0)')
-      
-      res.status(200).json({
-        message: "success"
-      })
+
+    res.status(200).json({
+      message: "success"
+    })
   } catch (err) {
     console.error(`err, ${err}`)
     res.status(400).json({
