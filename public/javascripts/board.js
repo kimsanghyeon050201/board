@@ -27,7 +27,7 @@ delBtn.addEventListener('click', () => {
             if (checkBoxs[i].checked) {
                 let row = table.rows[i + 1]
                 console.log(row.cells[5].innerText)
-                fetch("/delete", {
+                fetch("/list/delete", {
                     method: "DELETE",
                     headers: {
                         "Content-Type": "application/json"

@@ -5,7 +5,7 @@ const content = document.getElementById('message-text')
 
 btn.addEventListener('click', () => {
 
-  fetch('http://localhost:3000/post', {
+  fetch('http://localhost:3000/list/post', {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
