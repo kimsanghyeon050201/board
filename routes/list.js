@@ -3,6 +3,7 @@ var router = express.Router();
 const { sql, pool } = require('../data/db')
 
 router.get('/', async (req, res) => {
+    
     try {
         const query = await pool
 
@@ -23,7 +24,7 @@ router.get('/', async (req, res) => {
 })
 
 //update
-router.patch('/list/edit', async (req, res) => {
+router.patch('/edit', async (req, res) => {
     const { id, title, content } = req.body
     try {
         const query = await pool
@@ -44,7 +45,7 @@ router.patch('/list/edit', async (req, res) => {
     }
 })
 //delete
-router.delete('/list/delete', async (req, res) => {
+router.delete('/delete', async (req, res) => {
 
     const { id } = req.body
     try {
@@ -66,7 +67,8 @@ router.delete('/list/delete', async (req, res) => {
 })
 
 //insert
-router.post('/list/post', async (req, res) => {
+router.post('/post', async (req, res) => {
+    
     const { title, content, name } = req.body
 
     try {
