@@ -56,6 +56,8 @@ async function validateToken(req, res, next) {
     // return res.status(200).json({
     //     message : `${name} payload`
     // })
+    //payload는 accessToken에서 빼면 됨 req.coockies
+    //cron을 사용하여 만료된 토큰 지우는 스케쥴러 작업 해야함
     next()
 }
 
